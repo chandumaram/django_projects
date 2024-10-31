@@ -1,0 +1,25 @@
+{% extends 'webapp/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <body>
+        <div class="container bg-light shadow-md p-5 form-layout">
+            <h3> Update record </h3>
+            <h5> Update your record down below. </h5>
+            <hr>
+            <br>
+            <form method="POST" autocomplete="off">
+                {% csrf_token %}
+                {{form | crispy}}
+                <br>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary w-50"> Cancel </a>
+                    <button type="submit" class="btn btn-primary w-50"> Update </button>
+                </div>
+            </form>
+        </div>
+    </body>
+
+{% endblock %}
