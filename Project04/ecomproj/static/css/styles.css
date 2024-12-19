@@ -1,0 +1,138 @@
+.navbar{
+  position: sticky;
+  top: 0;
+  /* overflow: hidden; */
+  z-index: 1;
+}
+
+.body-content {
+  min-height: 90vh;
+}
+
+/* Home Page Styles (store/home.html) */
+.home-p-image {
+  /* padding: 10px; */
+
+  img {
+    height: 200px;
+  }
+}
+.product-name {
+  color: inherit;
+  text-decoration: none;
+
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.product-name:hover {
+  color: #e6590c;
+  text-decoration: underline;
+}
+
+.home-price {
+  display: flex;
+  flex-direction: row;
+  padding-top: 8px;
+  margin-bottom: 0px;
+  .p-symbol {
+    margin-top: 3px;
+    padding-right: 2px;
+    font-size: medium;
+  }
+  .p-price {
+    font-size: x-large;
+    font-weight: 500;
+  }
+}
+
+/* PRODUCT Page Styles (store/product.html) */
+/* Initially limit the height of the content container */
+.product-disc {
+  /* Adjust this height to show roughly 5 lines */
+  /* max-height: 100px;  */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* white-space: nowrap; */
+  display: -webkit-box;
+  /* Show only 5 lines */
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+/* Style to expand the content container */
+.product-disc.expanded {
+  max-height: none; /* Allows content to expand fully */
+  -webkit-line-clamp: unset; /* Remove line clamp when expanded */
+  white-space: normal; /* Allow text to wrap normally */
+}
+/* Style the Show More button */
+.product-disc-show-more {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
+  display: inline-block;
+  margin-top: 10px;
+}
+/* Hide the Show More button initially */
+.product-disc-show-more.hidden {
+  display: none;
+}
+
+/* CART Page Styles (cart/cart_summary.html) */
+/* Layout container */
+.cart-page {
+  display: flex;
+  height: 100vh;
+  padding: 20px;
+}
+
+/* Left side (Cart Items) */
+.cart-items {
+  flex: 1;
+  max-height: 100vh;
+  overflow-y: auto;
+  /* padding-right: 20px; */
+  /* border-right: 1px solid #ddd; */
+}
+
+/* Right side (Total Price and Checkout) */
+.cart-summary {
+  /* Fixed width */
+  /* width: 300px;  */
+  margin-left: 10px;
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  height: calc(100vh - 40px); /* Sticky within viewport */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+}
+
+/* Total Price Area */
+/* .total-price {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+} */
+
+@media (max-width: 768px) {
+  .cart-page {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .cart-items {
+    max-height: fit-content;
+  }
+
+  .cart-summary {
+    height: auto;
+    margin-left: initial;
+  }
+}

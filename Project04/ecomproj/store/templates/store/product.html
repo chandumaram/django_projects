@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <br>
+        <div class="card mb-3">
+            <div class="row g-0">
+                <div class="col-md-4 p-3">
+                    <img src="{{product.image.url}}" class="img-fluid rounded-start" width="250px" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p class="card-title" style="font-size:large; font-weight:500">{{product.name}}</p>
+                        <!-- <h5 class="card-title">{{product.name}}</h5> -->
+                        {% if product.is_sale %}
+                            <!-- Sale -->
+                            <div class="d-flex small text-warning mb-2">
+                                <div class="bi-star-fill"></div>
+                                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                <div class="bi-star-fill"></div>
+                            </div>
+                            <!-- Product price-->
+                            <span class="text-muted text-decoration-line-through">&#8377;{{ product.price }}</span>
+                            <h5>&#8377;{{ product.sale_price }}</h5>
+                        {% else %}
+                            <h5>&#8377;{{ product.price }}</h5>
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-md-2">Quantity:</div>
+                            <div class="col-md-2">
+                                <select id="qty-cart" class="form-select form-select-sm">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                  </select>
+                            </div>
+                        </div>
+                        <br>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+                        <button type="button" id="add-cart" value="{{ product.id }}" onclick="addCart()" class="btn btn-secondary">Add To Cart</button>
+                        <br><br>
+                        <div class="product-disc" id="product-disc"><p>{{product.description}}</p></div>
+                        <div class="product-disc-show-more hidden" id="productDiscShowMoreBtn" onclick="toggleProductDisc()">Show More</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <script>
+            addCart = () =>{
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'cart_add' %}",
+                    data: {
+                        product_id: $('#add-cart').val(),
+                        product_qty: $('#qty-cart option:selected').text(),
+                        csrfmiddlewaretoken: '{{csrf_token}}',
+                        action: 'post'
+                    },
+                    success(json){
+                        //console.log(json)
+                        document.getElementById('cart_quantity').textContent = json.qty;
+                        location.reload();
+                    },
+                    error(xhr, errmsg, err){
+
+                    }
+                })
+            }
+
+            toggleProductDisc = () => {
+                const content = document.getElementById('product-disc');
+                const showMoreBtn = document.getElementById('productDiscShowMoreBtn');
+        
+                content.classList.toggle('expanded');
+                
+                if (content.classList.contains('expanded')) {
+                    showMoreBtn.textContent = 'Show Less';
+                } else {
+                    showMoreBtn.textContent = 'Show More';
+                }
+            }
+
+            // Only show the "Show More" button if content overflows the initial height
+            window.onload = () => {
+                const content = document.getElementById('product-disc');
+                const showMoreBtn = document.getElementById('productDiscShowMoreBtn');
+
+                // Compare scrollHeight to clientHeight to determine if content is overflowing
+                if (content.scrollHeight > content.clientHeight) {
+                    showMoreBtn.classList.remove('hidden'); // Show the button only if content overflows
+                }
+            };
+        </script>
+    </div>
+{% endblock %}

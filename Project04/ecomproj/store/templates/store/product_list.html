@@ -1,0 +1,89 @@
+<div class="container px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4">
+
+        {% if products %}
+        {% for product in products %}
+
+        {% if product.is_sale %}
+        <div class="col mb-5">
+            <div class="card h-100">
+                <!-- Sale badge-->
+                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale
+                </div>
+                <!-- Product image-->
+                <div class="home-p-image p-2">
+                    <img class="card-img-top" src="{{product.image.url}}" alt="..." />
+                </div> <!-- Product details-->
+                <div class="card-body">
+                    <div>
+                        <!-- Product name-->
+                        <a href="{% url 'product' product.id %}" class="product-name"> {{ product.name }} </a>
+                        <!-- Sale -->
+                        <!-- <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                        <div class="bi-star-fill"></div>
+                                    </div> -->
+                        <!-- Product price-->
+                        <p class="home-price">
+                            <span class="p-symbol">&#8377;</span>
+                            <span class="p-price">{{ product.sale_price }}</span>
+                        </p>
+                        <div class="d-flex gap-2">
+                            <div class="d-flex small text-warning">
+                                <div class="bi-star-fill"></div>
+                                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                                <div class="bi-star-fill"></div>
+                            </div>
+                            <span class="text-muted" style="font-size: small;">
+                                MRP: <span class="text-decoration-line-through">&#8377;{{product.price }}</span>
+                            </span>
+
+                        </div>
+                        <!-- &#8377;{{ product.sale_price }} -->
+                    </div>
+                </div>
+                <!-- Product actions-->
+                <div class="card-footer border-top-0 bg-transparent mb-2">
+                    <!-- <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                        href="{% url 'product' product.id %}">View options</a></div> -->
+                    <button type="button" id="add-cart-home" onclick="addToCart('{{ product.id }}')"
+                        class="btn btn-warning btn-sm">Add to cart</button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col mb-5">
+            <div class="card h-100">
+                <!-- Product image-->
+                <div class="home-p-image p-2">
+                    <img class="card-img-top" src="{{product.image.url}}" alt="..." />
+                </div>
+                <!-- Product details-->
+                <div class="card-body">
+                    <!-- Product name-->
+                    <a href="{% url 'product' product.id %}" class="product-name"> {{ product.name }} </a>
+                    <!-- Product price-->
+                    <p class="home-price">
+                        <span class="p-symbol">&#8377;</span>
+                        <span class="p-price">{{ product.price }}</span>
+                    </p>
+                </div>
+                <!-- Product actions-->
+                <div class="card-footer border-top-0 bg-transparent mb-2">
+                    <!-- <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                        href="{% url 'product' product.id %}">View options</a></div> -->
+                    <button type="button" onclick="addToCart('{{ product.id }}')" class="btn btn-warning btn-sm">Add
+                        to cart</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% endfor %}
+        {% else %}
+        <p>No products found.</p>
+        {% endif %}
+
+    </div>
+</div>

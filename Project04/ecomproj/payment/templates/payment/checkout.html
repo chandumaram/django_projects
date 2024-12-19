@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Header-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h3 class="m-2">Checkout</h3>
+                <div class="card">
+                    <div class="card-header">
+                      Order Summary
+                    </div>
+                    <div class="card-body">
+                        {% for product in cart_products %}
+                            {{ product.name }}:
+                            {% if product.is_sale %}
+                                &#8377;{{ product.sale_price }}
+                            {% else %}
+                                &#8377;{{ product.price }}
+                            {% endif %}
+                            <br>
+                            <small>Quantity:
+                            {% for key, value in quantities.items %}
+                                {% if key == product.id|slugify %}
+                                    {{value}}
+                                {% endif %}
+                            {% endfor %}</small>
+                            <br><br>
+                        {% endfor %}
+                        Total: &#8377;{{ total }}
+                        <br><br>
+                        <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-secondary">Update Items</a>
+                    </div>
+                </div>
+                <br><br>
+                <div class="card">
+                    <div class="card-header">
+                      Shipping Info
+                    </div>
+                    <div class="card-body">
+                        <!-- {{ shipping_form.as_p }} -->
+                          Name: {{ shipping_address.full_name }} <br>
+                          Phone: {{ shipping_address.phone }} <br>
+                          Email: {{ shipping_address.email }} <br>
+                          Address1: {{ shipping_address.address1 }} <br>
+                          Address1: {{ shipping_address.address2 }} <br>
+                          City: {{ shipping_address.city }} <br>
+                          State: {{ shipping_address.state }} <br>
+                          Zipcode: {{ shipping_address.zipcode }} <br>
+                          Country: {{ shipping_address.country }} <br><br>
+                          <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-secondary">Update Shipping Info</a>
+                    </div>
+                </div>
+                <br>
+                <a href="{% url 'billing_info' %}" class="btn btn-secondary">Continue To Billing</a>
+            </div>
+        </div>
+    </div>
+    <br><br>
+
+{% endblock %}

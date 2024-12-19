@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">{{ category }}</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Category Page</p>
+        </div>
+    </div>
+</header>
+<!-- Section-->
+<section class="py-5">
+    {% include 'store/product_list.html' with products=products %}
+</section>
+
+<!-- pass the CSRF token manually, 
+ then token is accessible in your JavaScript 
+ For instance, you can pass it as a hidden field
+ -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<!-- Include JavaScript -->
+<script src="{% static 'js/cart.js' %}"></script>
+{% endblock %}
