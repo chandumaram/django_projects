@@ -8,3 +8,7 @@
 
   `pip install django-allauth`
   `pip install "django-allauth[socialaccount]"`
+
+4) Project04: ecomproj
+
+5) Project05: celery_with_django
