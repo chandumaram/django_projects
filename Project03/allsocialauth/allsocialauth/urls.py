@@ -21,4 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('socialauth.urls')),
     path('accounts/', include('allauth.urls')),
+    # if you have already accounts app rout then include social auth routs in accouts.url 
+    #path('social/', include('allauth.socialaccount.urls')),  # Social login routes (including Google)
 ]

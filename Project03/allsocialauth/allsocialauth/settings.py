@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
 
     'socialauth'
 ]
@@ -88,14 +89,33 @@ TEMPLATES = [
     },
 ]
 
+SITE_ID = 1
+
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         'APP': {
-            'client_id': 'Ov23liAMxxlyASs2bc17',
-            'secret': '0e10145264a1517eb7286bb6bc2c9c28fb8f63f0',
+            'client_id': '***',
+            'secret': '***',
             'key': ''
         }
+    },
+    'google': {
+        'APP': {
+            'client_id': '***',
+            'secret': '***',
+            'key': ''
+        },
+        'settings':{
+            # You can fine tune these settings per app:
+            "scope": [
+                "profile",
+                "email",
+            ],
+            "auth_params": {
+                "access_type": "online",
+            },
+        },
     }
 }
 
