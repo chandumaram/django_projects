@@ -12,3 +12,5 @@
 4) Project04: ecomproj
 
 5) Project05: celery_with_django
+
+6) Project06: flask_email_sender (Bulk Email Sender)
