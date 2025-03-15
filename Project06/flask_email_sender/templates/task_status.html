@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Email Task Status</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <style>
+        .container {
+            max-width: 700px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #status-box {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <script>
+        function checkStatus() {
+            fetch(`/task_status/{{ task_id }}`)
+                .then(response => response.json())
+                .then(data => {
+                    // console.log(data.status)
+                    // console.log(data)
+                    document.getElementById("status").innerText = data.status;
+                    document.getElementById("total").innerText = data.total;
+                    document.getElementById("success").innerText = data.success;
+                    document.getElementById("failed").innerText = data.failed;
+                    document.getElementById("pending").innerText = data.pending;
+
+                    if (data.status === "COMPLETED") {
+                        document.getElementById("status").style.color = "green"
+                        document.getElementById("home").innerHTML = `<a href="/" class="btn btn-secondary">Go to home</a>`;
+                        document.getElementById("download").innerHTML = `<a href="/download/${data.report}" class="btn btn-success">📥 Download Report</a>`;
+                        document.getElementById("allreports").innerHTML = `<a href="/all_reports" class="btn btn-secondary">All Reports</a>`;
+                        clearInterval(interval);
+                    }
+                    else if (data.status == "FAILURE"){
+                        clearInterval(interval);
+                        document.getElementById("status").style.color = "red"
+                        document.getElementById("error-msg").innerText = data.message;
+                        document.getElementById("error-msg").style.color = "red"
+                        document.getElementById("home").innerHTML = `<a href="/" class="btn btn-secondary">Go to home</a>`;
+                    }
+                });
+        }
+
+        let interval = setInterval(checkStatus, 5000);
+    </script>
+</head>
+
+<body class="container">
+    <h2 class="text-center mb-4">📊 Bulk Email Task Status</h2>
+    <div id="status-box">
+        <p id="error-msg"></p>
+        <p><strong>Status: </strong> <span id="status">Waiting to start</span></p>
+        <p><strong>Total Emails: </strong> <span id="total">0</span></p>
+        <p><strong>Sent Successfully: </strong> <span id="success">0</span></p>
+        <p><strong>Failed: </strong> <span id="failed">0</span></p>
+        <p><strong>Pending: </strong> <span id="pending">0</span></p>
+    </div>
+
+    <!-- Download Report Button -->
+    <div class="d-flex justify-content-around">
+        <div id="home" class="mt-4 text-center">
+        </div>
+        <div id="download" class="mt-4 text-center">
+        </div>
+        <div id="allreports" class="mt-4 text-center">
+        </div>
+    </div>
+
+</body>
+
+</html>

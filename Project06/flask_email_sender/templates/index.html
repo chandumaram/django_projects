@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bulk Email Sender</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Include Quill.js for RTF -->
+    <!-- <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script> -->
+
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
+
+        .container {
+            max-width: 700px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #rtf-text {
+            display: none;
+        }
+
+        .quill-editor {
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body class="container">
+    <h2 class="text-center mb-4">📧 Bulk Email Sender</h2>
+
+    <!-- Show flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <p class="{{ category }}">{{ message }}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <!-- File Upload Form -->
+    <form id="emailForm" action="/" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <div class="mb-3">
+            <label for="file" class="form-label">Upload Email List (CSV/Excel)</label>
+            <input type="file" class="form-control" name="file" id="file" required>
+        </div>
+        <div class="mb-3">
+            <label for="subject" class="form-label">Email Subject</label>
+            <input type="text" class="form-control" name="subject" id="subject" value="{{ subject }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="body_format" class="form-label">Email Body Format:</label>
+            <select class="form-control" name="body_format" id="body_format" required onchange="toggleEditor()">
+                <option value="plain" {% if body_format=='plain' %}selected{% endif %}>
+                    Plain Text
+                </option>
+                <option value="html" {% if body_format=='html' %}selected{% endif %}>
+                    HTML
+                </option>
+                <option value="rtf" {% if body_format=='rtf' %}selected{% endif %}>
+                    RTF
+                </option>
+            </select>
+        </div>
+        <!-- Plain Text / HTML Textarea -->
+        <div class="mb-3" id="plain-text">
+            <label for="body" class="form-label">Email Body</label>
+            <textarea class="form-control" name="body" id="body" rows="5"> </textarea>
+        </div>
+        <!-- RTF Editor (Hidden by Default) -->
+        <div class="mb-3" id="rtf-text">
+            <label for="rtf_body" class="form-label">Email Body</label>
+            <div id="rtf-editor" class="quill-editor"></div>
+            <input type="hidden" name="rtf_body" id="rtf_body" value="{{body}}"> <!-- Stores RTF content -->
+        </div>
+        <div class="mb-3">
+            <label for="attachments" class="form-label">Attach Files:</label>
+            <input type="file" class="form-control" name="attachments" id="attachments" multiple>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">📨 Send Emails</button>
+        </div>
+    </form>
+    <div id="home" class="mt-4 text-center">
+        <a href="/all_reports" class="btn btn-secondary">All Reports</a>
+    </div>
+
+    <script>
+        var quill;
+
+        // when page load 
+        document.addEventListener("DOMContentLoaded", () => {
+            // Initialize Quill editor
+            quill = new Quill('#rtf-editor', {
+                theme: 'snow',
+                placeholder: 'Write your email here...',
+                modules: {
+                    toolbar: [
+                        // [{ 'font': [] }], // Font formats (Sans, Serif, Monospace)
+                        // [{ 'size': ['small', false, 'large', 'huge'] }], // Font sizes
+                        // [{ 'header': [1, 2, false] }], // Heading options
+                        ['bold', 'italic', 'underline'], // Formatting options
+                        [{ 'color': [] }, { 'background': [] }], // Text & Background color
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['link', 'image'], // Link & Image
+                        // ['clean'] // Remove formatting
+                    ]
+                }
+            });
+
+            let body_format = document.getElementById("body_format").value;
+            let plainTextarea = document.getElementById("body");
+            let body_data = document.getElementById("rtf_body")?.value;         
+
+            if (body_format == 'rtf') quill.root.innerHTML = body_data; // Set initial value for Quill Editor
+            else plainTextarea.value = body_data
+
+            toggleEditor();
+        })
+
+        // Toggle between Plain Text & RTF Editor
+        function toggleEditor() {
+            let format = document.getElementById("body_format").value;
+            let plainText = document.getElementById("plain-text");
+            let plainTextarea = document.getElementById("body");
+            let rtfEditor = document.getElementById("rtf-text");
+            if (format === "rtf") {
+                plainTextarea.removeAttribute("required");  // Not required for RTF
+                plainText.style.display = "none";
+                rtfEditor.style.display = "block";
+            } else {
+                plainText.style.display = "block";
+                plainTextarea.setAttribute("required", "required");  // Required for Plain & HTML
+                rtfEditor.style.display = "none";
+            }
+        }
+
+        // Form validation before submitting
+        function validateForm() {
+            let format = document.getElementById("body_format").value;
+            let plainText = document.getElementById("body").value.trim();
+            let rtfContent = quill.root.innerHTML.trim();
+
+            // If format is RTF, ensure RTF editor is not empty
+            if (format === "rtf") {
+                if (rtfContent === "<p><br></p>") { // Default empty Quill value
+                    alert("RTF Body is required!");
+                    return false;
+                }
+                document.getElementById("rtf_body").value = rtfContent; // Store RTF content in hidden input
+            }
+            // If format is Plain/HTML, ensure plain text is not empty
+            else {
+                if (plainText === "") {
+                    alert("Email Body is required for Plain Text or HTML format!");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+    </script>
+
+</body>
+
+</html>
